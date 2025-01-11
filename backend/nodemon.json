@@ -1,0 +1,17 @@
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "execMap": {
+    "ts": "ts-node"
+  },
+  "ignore": [
+    "dist/*.js",
+    "dist/**/*.js",
+    "dist/test/**/*.*",
+    "dist/src/**/*.*",
+    "dist/**/*.ts",
+    "dist/**/*.d.ts",
+    "dist/**/*.map",
+    "node_modules"
+  ]
+}
