@@ -56,9 +56,6 @@ export class UserNotification {
   })
   isUserRead: boolean | null;
 
-  @Typeorm.Column("uuid", { name: "org_id" })
-  orgId: string;
-
   @Typeorm.Column("json", { name: "other_details", nullable: true })
   otherDetails: object | null;
 

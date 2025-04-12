@@ -39,7 +39,7 @@ export function generateOTP(
   if (options.includeSpecialChars) charPool += specialChars;
 
   let otp = "";
-  while (otp.length < length) {
+  while (otp.length < options.length) {
     const randomChar = charPool[crypto.randomInt(0, charPool.length)];
 
     // Ensure the password does not start with '0' if digits are included

@@ -1,30 +1,29 @@
-import { RedisOptions } from "bullmq";
 import { config } from "dotenv";
 import handlebars from "handlebars";
 
-import { QueueRedis } from "../../common/index.js";
 import { logger } from "../../middleware/index.js";
 import { getFullName } from "../../utils/index.js";
+import { notificationHandler } from "./processor.notification.js";
 
 import * as Entity from "../../entities/index.js";
 import * as Repo from "../../repository/index.js";
 import * as Model from "./notification.model.js";
 
-import { notificationJobHandler } from "./processor.notification.js";
+// import { notificationJobHandler } from "./processor.notification.js";
 
 config();
 
-const queueName = process.env.QUEUE_REDIS_KEY_PREFIX + "-Notification";
-const rateLimiterPerSec = Number(process.env.QUEUE_RATE_LIMIT_PER_SEC || 100);
+// const queueName = process.env.QUEUE_REDIS_KEY_PREFIX + "-Notification";
+// const rateLimiterPerSec = Number(process.env.QUEUE_RATE_LIMIT_PER_SEC || 100);
 
-const conn: RedisOptions = {
-  host: process.env.QUEUE_REDIS_HOST,
-  port: Number(process.env.QUEUE_REDIS_PORT),
-  password: process.env.QUEUE_REDIS_PASSWORD
-};
+// const conn: RedisOptions = {
+//   host: process.env.QUEUE_REDIS_HOST,
+//   port: Number(process.env.QUEUE_REDIS_PORT),
+//   password: process.env.QUEUE_REDIS_PASSWORD
+// };
 
-const queueRedis = new QueueRedis(conn, queueName);
-queueRedis.addWorker(notificationJobHandler, rateLimiterPerSec);
+// const queueRedis = new QueueRedis(conn, queueName);
+// queueRedis.addWorker(notificationJobHandler, rateLimiterPerSec);
 
 export class NotificationController {
   private async addNotification(
@@ -46,10 +45,9 @@ export class NotificationController {
         type
       );
       userNotification = await Repo.saveUserNotification(userNotification);
-      queueRedis.addJob(
-        userNotification.id,
-        userNotification.id
-      );
+      // queueRedis.addJob(userNotification.id, userNotification.id);
+
+      notificationHandler(userNotification.id);
       return;
     }
   }
@@ -198,7 +196,7 @@ export class NotificationController {
   }
 
   // notification functions
-  public async sendOTP(req: Model.SendEmailNotificationOTPReq) {
+  public async sendEmailWithOTP(req: Model.SendEmailNotificationOTPReq) {
     try {
       const template = await this.getTemplateContent(
         Model.NotificationTemplate.OTPEmail
@@ -224,7 +222,7 @@ export class NotificationController {
       emailId: req.emailId,
       mobileNumber: null,
       userId: req.userId,
-      userName: "User",
+      userName: "Prism Pass User",
       otp: req.otp
     };
   }

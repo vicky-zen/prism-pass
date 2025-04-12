@@ -21,7 +21,11 @@ export async function getIpDetail(
   ip: string | string[] | undefined
 ): Promise<GeoJsResponse> {
   // Ensure the IP is a valid string
-  const ipString = Array.isArray(ip) ? ip[0] : ip;
+  let ipString = Array.isArray(ip)
+    ? ip[0]
+    : ip?.startsWith("::ffff:")
+    ? ip.replace("::ffff:", "")
+    : ip;
 
   if (!ipString || typeof ipString !== "string" || !RegExp.ip.test(ipString)) {
     throw new Error("Invalid IP address format.");

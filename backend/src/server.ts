@@ -5,6 +5,7 @@ import routes from "./services/index.routes.js";
 import * as entities from "./entities/index.js";
 import * as Middleware from "./middleware/index.js";
 import cors from "cors";
+import { initialCaches } from "./cache/index.js";
 
 config();
 
@@ -25,16 +26,29 @@ export const AppDataSource = new DataSource({
 });
 
 AppDataSource.initialize()
-  .then(() => {
+  .then(async () => {
     try {
       const app = express();
       app.options("/", cors());
+      Middleware.applyMiddleware(app);
       Middleware.applyRoutes(app, routes);
       app.listen(process.env.PORT || 3000, () => {
         console.log(`Server is running on port ${process.env.PORT || 3000}`);
       });
+
+      await InitializeCache();
     } catch (error) {
       console.log(error);
     }
   })
   .catch((error) => console.log(error));
+
+const InitializeCache = async () => {
+  const promiseFun: Promise<unknown>[] = [];
+  initialCaches.forEach((fun) => promiseFun.push(fun()));
+  await Promise.allSettled(promiseFun);
+  Middleware.logger.info("success", {
+    type: "Information",
+    subType: "initializeCache"
+  });
+};

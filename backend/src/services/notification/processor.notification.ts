@@ -1,7 +1,7 @@
 import { Job } from "bullmq";
 import { config } from "dotenv";
 import { createTransport } from "nodemailer";
-import { Attachment } from "nodemailer/lib/mailer";
+// import { Attachment } from "nodemailer/lib/mailer";
 
 import * as Entity from "../../entities/index.js";
 import * as Middleware from "../../middleware/index.js";
@@ -28,6 +28,27 @@ class NotificationHandler {
     } catch (error) {
       Middleware.logger.error("notification job process error", {
         id: job.data
+      });
+    }
+  }
+
+  public async notificationHandler(notificationId: string) {
+    try {
+      Middleware.logger.info("notification job process start", {
+        id: notificationId
+      });
+
+      const data = await Repo.getUserNotificationId(notificationId);
+      if (!data) throw Error(`Job Not found JobId: ${notificationId}`);
+
+      await Promise.allSettled([
+        this.processAppMessage(data),
+        this.processEmail(data),
+        this.processMobileMessage(data)
+      ]);
+    } catch (error) {
+      Middleware.logger.error("notification job process error", {
+        id: notificationId
       });
     }
   }
@@ -101,15 +122,14 @@ class NotificationHandler {
     };
     try {
       const transport = createTransport({
-        host: process.env.EMAIL_HOST,
-        port: Number(process.env.EMAIL_PORT),
+        service: "gmail",
         secure: true,
         auth: {
           user: process.env.EMAIL_USERNAME,
           pass: process.env.EMAIL_PASSWORD
         }
       });
-      const attachments: Attachment[] = [];
+      // const attachments: Attachment[] = [];
 
       const res = await transport.sendMail({
         from: `${process.env.EMAIL_FROMNAME} <${process.env.EMAIL_FROM}>`,
@@ -118,7 +138,7 @@ class NotificationHandler {
         bcc: [],
         subject: emailNotification.sub,
         html: emailNotification.body,
-        attachments
+        attachments: []
       });
       response.isSent = true;
       response.res = res;
@@ -152,4 +172,9 @@ class NotificationHandler {
 export async function notificationJobHandler(job: Job) {
   const notification = new NotificationHandler();
   await notification.notificationJobHandler(job);
+}
+
+export async function notificationHandler(notificationId: string) {
+  const notification = new NotificationHandler();
+  await notification.notificationHandler(notificationId);
 }

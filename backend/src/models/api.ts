@@ -1,10 +1,10 @@
 export enum Status {
   Success = "Success",
-  Error = "Error",
+  Error = "Error"
 }
 
 export enum UserType {
-  User = 0,
+  User = 0
 }
 
 declare module "express" {
@@ -17,12 +17,11 @@ export class AuthToken {
   userId: string;
   userName: string;
   email: string;
-  isResetPassword: boolean;
 }
 
 export enum APIErrorCode {
   jwt = "jwt",
-  validationError = "validationError",
+  validationError = "validationError"
 }
 
 export class API_Response<T, U> {

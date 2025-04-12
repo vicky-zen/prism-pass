@@ -5,12 +5,9 @@ import { logger } from "./index.js";
 
 export const JWTExcludePath = [
   "/",
-  "/api/auth/register",
-  "/api/auth/otp/resend",
+  "/api/auth/login-or-register",
   "/api/auth/otp/verify",
-  "/api/auth/login",
-  "/api/auth/forget",
-  "/api/auth/password/token/validate",
+  "/api/auth/otp/resend"
 ];
 
 export async function validateJWT(
@@ -34,7 +31,7 @@ export async function checkToken(
     const apiResponse = await jwtErrorHandling(req, ["JWT01"], req.path);
     logger.info("Token not supplied", {
       error: apiResponse.error ?? "",
-      path: req.path,
+      path: req.path
     });
     return res.status(401).send(apiResponse); // Unauthorized if token is missing
   }
@@ -54,13 +51,13 @@ export async function checkToken(
     if (err instanceof Error) {
       const apiResponse = await jwtErrorHandling(req, ["JWT01"], req.path);
       logger.info("Token expired or invalid", {
-        error: apiResponse.error || err.message || "",
+        error: apiResponse.error || err.message || ""
       });
       return res.status(401).send(apiResponse);
     }
 
     logger.info("An unknown error occurred while verifying the token", {
-      error: "Unknown error",
+      error: "Unknown error"
     });
     return res.status(500).send({ error: "Internal server error" });
   }

@@ -9,7 +9,7 @@ function encryptDataWithRSA(data: string, clientPublicKeyPem: string): string {
 
 // Decrypt data using the Server's Private Key (RSA)
 function decryptDataWithRSA(encryptedData: string): string {
-  const privateKey = forge.pki.privateKeyFromPem(serverPrivateKeyPem);
+  const privateKey = forge.pki.privateKeyFromPem("serverPrivateKeyPem");
   const encrypted = forge.util.decode64(encryptedData);
   return privateKey.decrypt(encrypted, "RSA-OAEP");
 }
