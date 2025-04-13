@@ -10,7 +10,7 @@ export const LoginRoutes: IRoute[] = [
     path: "/api/pass/login",
     method: "POST",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
         try {

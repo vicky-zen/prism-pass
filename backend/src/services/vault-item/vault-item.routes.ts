@@ -9,7 +9,7 @@ export const VaultItemRoutes: IRoute[] = [
     path: "/api/pass/vault-items/soft-delete",
     method: "POST",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
 
@@ -38,7 +38,7 @@ export const VaultItemRoutes: IRoute[] = [
     path: "/api/pass/vault-items/restore",
     method: "POST",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
 
@@ -65,7 +65,7 @@ export const VaultItemRoutes: IRoute[] = [
     path: "/api/pass/vault-items/permanent-delete",
     method: "POST",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
 

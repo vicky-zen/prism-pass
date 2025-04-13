@@ -3,13 +3,14 @@ import { getApiSuccessRes, getErrorRes } from "../../common/error.js";
 import { Timer } from "../../utils/timer.js";
 import { VaultController } from "./vault.controller.js";
 import { logger } from "../../middleware/logger.js";
+import { IRoute } from "../../middleware/router.js";
 
-export const VaultRoutes = [
+export const VaultRoutes: IRoute[] = [
   {
     path: "/api/pass/vault",
     method: "POST",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
         try {
@@ -35,7 +36,7 @@ export const VaultRoutes = [
     path: "/api/pass/vault",
     method: "GET",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
         try {
@@ -61,7 +62,7 @@ export const VaultRoutes = [
     path: "/api/pass/vault/:id",
     method: "GET",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
         try {
@@ -90,7 +91,7 @@ export const VaultRoutes = [
     path: "/api/pass/vault",
     method: "DELETE",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
         try {

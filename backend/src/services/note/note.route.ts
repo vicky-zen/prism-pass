@@ -9,7 +9,7 @@ export const NoteRoutes: IRoute[] = [
     path: "/api/pass/note",
     method: "POST",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
         try {

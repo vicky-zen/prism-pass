@@ -3,13 +3,14 @@ import { getApiSuccessRes, getErrorRes } from "../../common/error.js";
 import { Timer } from "../../utils/timer.js";
 import { PersonalInfoController } from "./personalInfo.controller.js";
 import { logger } from "../../middleware/logger.js";
+import { IRoute } from "../../middleware/router.js";
 
-export const PersonalInfoRoutes = [
+export const PersonalInfoRoutes: IRoute[] = [
   {
     path: "/api/pass/personal-info",
     method: "POST",
     handler: [
-      async (req: Request, res: Response) => {
+      async (req: Request, res: Response, doNothing) => {
         const timer = new Timer();
         timer.start();
         try {
