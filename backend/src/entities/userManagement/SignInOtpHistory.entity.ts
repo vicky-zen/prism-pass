@@ -14,13 +14,13 @@ export class SignInOtpHistory {
   @Typeorm.Column("integer", { name: "no_of_times_tried", default: () => "0" })
   noOfTimesTried: number;
 
-  @Typeorm.Column("timestamp without time zone", {
+  @Typeorm.Column("timestamp with time zone", {
     name: "create_at",
     default: () => "now()"
   })
-  createAt: Date;
+  createdAt: Date;
 
-  @Typeorm.Column("timestamp without time zone", { name: "expire_at" })
+  @Typeorm.Column("timestamp with time zone", { name: "expire_at" })
   expireAt: Date;
 
   @Typeorm.PrimaryGeneratedColumn({ type: "integer", name: "id" })

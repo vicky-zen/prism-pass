@@ -1,4 +1,7 @@
 import * as Typeorm from "typeorm";
+import { Relation } from "../../models/index.js";
+import { Vault } from "./Vault.entity.js";
+import { VaultType } from "../../services/vault-item/vault-item.model.js";
 
 @Typeorm.Index("note_pkey", ["id"], { unique: true })
 @Typeorm.Entity("note", { schema: "pass" })
@@ -6,7 +9,7 @@ export class Note {
   @Typeorm.Column("uuid", {
     primary: true,
     name: "id",
-    default: () => "gen_random_uuid()",
+    default: () => "gen_random_uuid()"
   })
   id: string;
 
@@ -20,9 +23,9 @@ export class Note {
     name: "type",
     nullable: true,
     enum: ["login", "card", "note", "identity", "alias"],
-    default: () => "'note'.e_pass_type",
+    default: () => "'note'.e_pass_type"
   })
-  type: "login" | "card" | "note" | "identity" | "alias" | null;
+  type: VaultType | null;
 
   @Typeorm.Column("boolean", { name: "is_pinned", default: () => "false" })
   isPinned: boolean;
@@ -30,23 +33,33 @@ export class Note {
   @Typeorm.Column("uuid", { name: "create_by" })
   createBy: string;
 
-  @Typeorm.Column("timestamp with time zone", {
-    name: "create_at",
-    nullable: true,
-    default: () => "now()",
+  @Typeorm.CreateDateColumn({
+    name: "createAt",
+    type: "timestamp with time zone"
   })
-  createAt: Date | null;
+  createdAt: Date;
 
   @Typeorm.Column("integer", {
     name: "modified_count",
     nullable: true,
-    default: () => "1",
+    default: () => "1"
   })
   modifiedCount: number | null;
 
-  @Typeorm.Column("timestamp with time zone", { name: "update_at", nullable: true })
-  updateAt: Date | null;
+  @Typeorm.UpdateDateColumn({
+    name: "updateAt",
+    type: "timestamp with time zone"
+  })
+  updatedAt: Date;
 
-  @Typeorm.Column("timestamp with time zone", { name: "delete_at", nullable: true })
-  deleteAt: Date | null;
+  @Typeorm.DeleteDateColumn({
+    name: "deleteAt",
+    type: "timestamp with time zone",
+    nullable: true
+  })
+  deletedAt: Date | null;
+
+  @Typeorm.ManyToOne(() => Vault, (vault) => vault.notes)
+  @Typeorm.JoinColumn([{ name: "vault_id", referencedColumnName: "id" }])
+  vault: Relation<Vault>;
 }

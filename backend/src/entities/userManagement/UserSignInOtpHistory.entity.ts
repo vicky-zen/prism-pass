@@ -17,13 +17,13 @@ export class UserSignInOtpHistory {
   @Typeorm.Column("integer", { name: "attempts", default: () => "0" })
   attempts: number;
 
-  @Typeorm.Column("timestamp without time zone", {
+  @Typeorm.Column("timestamp with time zone", {
     name: "created_at",
     default: () => "now()"
   })
   createdAt: Date;
 
-  @Typeorm.Column("timestamp without time zone", { name: "expires_at" })
+  @Typeorm.Column("timestamp with time zone", { name: "expires_at" })
   expiresAt: Date;
 
   @Typeorm.Column("citext", { name: "email" })

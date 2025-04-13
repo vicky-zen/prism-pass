@@ -1,11 +1,12 @@
+import cors from "cors";
 import { config } from "dotenv";
 import express from "express";
 import { DataSource } from "typeorm";
-import routes from "./services/index.routes.js";
+import { initialCaches } from "./cache/index.js";
 import * as entities from "./entities/index.js";
 import * as Middleware from "./middleware/index.js";
-import cors from "cors";
-import { initialCaches } from "./cache/index.js";
+import routes from "./services/index.routes.js";
+import { loadCommonPasswords } from "./utils/passwordUtils.js";
 
 config();
 
@@ -32,6 +33,7 @@ AppDataSource.initialize()
       app.options("/", cors());
       Middleware.applyMiddleware(app);
       Middleware.applyRoutes(app, routes);
+      loadCommonPasswords("./common-passwords.txt");
       app.listen(process.env.PORT || 3000, () => {
         console.log(`Server is running on port ${process.env.PORT || 3000}`);
       });

@@ -31,5 +31,4 @@ export { Card } from "./pass/Card.entity.js";
 export { Login } from "./pass/Login.entity.js";
 export { Note } from "./pass/Note.entity.js";
 export { PersonalInfo } from "./pass/PersonalInfo.entity.js";
-
-
+export { Vault } from "./pass/Vault.entity.js";

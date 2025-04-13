@@ -83,3 +83,13 @@ export async function updateOTPInValid(userId: string) {
     { isValid: false }
   );
 }
+
+export async function findUserById(
+  userId: string
+): Promise<Entity.UserProfile | null> {
+  const res = await AppDataSource.getRepository(Entity.UserProfile).findOne({
+    where: { userId }
+  });
+
+  return res;
+}
