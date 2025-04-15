@@ -30,11 +30,11 @@ export class Note {
   @Typeorm.Column("boolean", { name: "is_pinned", default: () => "false" })
   isPinned: boolean;
 
-  @Typeorm.Column("uuid", { name: "create_by" })
-  createBy: string;
+  @Typeorm.Column("uuid", { name: "created_by" })
+  createdBy: string;
 
   @Typeorm.CreateDateColumn({
-    name: "createAt",
+    name: "created_at",
     type: "timestamp with time zone"
   })
   createdAt: Date;
@@ -47,13 +47,13 @@ export class Note {
   modifiedCount: number | null;
 
   @Typeorm.UpdateDateColumn({
-    name: "updateAt",
+    name: "updated_at",
     type: "timestamp with time zone"
   })
   updatedAt: Date;
 
   @Typeorm.DeleteDateColumn({
-    name: "deleteAt",
+    name: "deleted_at",
     type: "timestamp with time zone",
     nullable: true
   })

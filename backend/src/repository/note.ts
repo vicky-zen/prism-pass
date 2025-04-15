@@ -15,7 +15,7 @@ export async function findNoteById(
   return await AppDataSource.getRepository(Note).findOne({
     where: {
       id: noteId,
-      createBy: userId,
+      createdBy: userId,
       vault: {
         id: vaultId
       },
@@ -31,8 +31,11 @@ export async function getActiveNotesByVaultId(
   return AppDataSource.getRepository(Note).find({
     where: {
       vault: { id: vaultId },
-      createBy: userId,
+      createdBy: userId,
       deletedAt: IsNull()
+    },
+    order: {
+      title: "ASC"
     }
   });
 }

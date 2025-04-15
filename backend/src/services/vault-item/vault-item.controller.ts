@@ -40,22 +40,28 @@ export class VaultItemController {
     req: Model.IVaultItemOperationReq,
     action: "soft-delete" | "restore" | "permanent-delete"
   ): Promise<boolean> {
-    const vault = await Repo.getVaultByIdAndUser(
-      this.authToken.userId,
-      req.vaultId
-    );
+    const uniqueVaultIds = [...new Set(req.items.map((item) => item.vaultId))];
 
-    if (!vault) throw new Error("Vault does not belong to the user");
+    for (const vaultId of uniqueVaultIds) {
+      const vault = await Repo.getVaultByIdAndUser(
+        this.authToken.userId,
+        vaultId
+      );
+
+      if (!vault)
+        throw new Error(`Vault ${vaultId} does not belong to the user`);
+    }
 
     const grouped = req.items.reduce((acc, item) => {
-      if (!acc[item.type]) acc[item.type] = [];
-      acc[item.type].push(item.id);
+      const key = `${item.vaultId}:${item.type}`;
+      if (!acc[key])
+        acc[key] = { ids: [], vaultId: item.vaultId, type: item.type };
+      acc[key].ids.push(item.id);
       return acc;
-    }, {} as Record<Model.VaultType, string[]>);
+    }, {} as Record<string, { ids: string[]; vaultId: string; type: Model.VaultType }>);
 
     return await Repo.handleVaultItemsAction(
-      grouped,
-      req.vaultId,
+      Object.values(grouped),
       this.authToken.userId,
       action
     );
@@ -66,20 +72,73 @@ export class VaultItemController {
   ) {
     const schema: Yup.ObjectSchema<Model.IVaultItemOperationReq> =
       Yup.object().shape({
-        vaultId: Yup.string().uuid().required(),
         items: Yup.array()
           .of(
             Yup.object({
               id: Yup.string().uuid().required(),
               type: Yup.mixed<Model.VaultType>()
                 .oneOf(Object.values(Model.VaultType))
-                .required()
+                .required(),
+              vaultId: Yup.string().uuid().required()
             })
           )
           .min(1)
           .required()
       });
 
-    await schema.validate(req, { abortEarly: false });
+    await schema.validate(req);
+  }
+
+  public async pinOrUnpinItems(
+    req: Model.IPinItemsReq
+  ): Promise<Model.IPinItemsRes> {
+    await this.validatePinReq(req);
+
+    const uniqueVaultIds = [...new Set(req.items.map((item) => item.vaultId))];
+
+    for (const vaultId of uniqueVaultIds) {
+      const vault = await Repo.getVaultByIdAndUser(
+        this.authToken.userId,
+        vaultId
+      );
+      if (!vault)
+        throw new Error(`Vault ${vaultId} does not belong to the user`);
+    }
+
+    const grouped = req.items.reduce((acc, item) => {
+      const key = `${item.vaultId}:${item.type}`;
+      if (!acc[key])
+        acc[key] = { ids: [], vaultId: item.vaultId, type: item.type };
+      acc[key].ids.push(item.id);
+      return acc;
+    }, {} as Record<string, { ids: string[]; vaultId: string; type: Model.VaultType }>);
+
+    const isUpdated = await Repo.handleVaultItemsPinAction(
+      Object.values(grouped),
+      this.authToken.userId,
+      req.isPin
+    );
+
+    return { isUpdated };
+  }
+
+  private async validatePinReq(req: Model.IPinItemsReq) {
+    const schema: Yup.ObjectSchema<Model.IPinItemsReq> = Yup.object().shape({
+      isPin: Yup.boolean().required(),
+      items: Yup.array()
+        .of(
+          Yup.object({
+            id: Yup.string().uuid().required(),
+            type: Yup.mixed<Model.VaultType>()
+              .oneOf(Object.values(Model.VaultType))
+              .required(),
+            vaultId: Yup.string().uuid().required()
+          })
+        )
+        .min(1)
+        .required()
+    });
+
+    await schema.validate(req);
   }
 }

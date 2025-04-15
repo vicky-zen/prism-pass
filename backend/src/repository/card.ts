@@ -14,7 +14,7 @@ export async function findCardDetails(
   return await AppDataSource.getRepository(Card).findOne({
     where: {
       id: cardId,
-      createBy: userId,
+      createdBy: userId,
       vault: {
         id: vaultId
       },
@@ -30,8 +30,11 @@ export async function getActiveCardsByVaultId(
   return AppDataSource.getRepository(Card).find({
     where: {
       vault: { id: vaultId },
-      createBy: userId,
+      createdBy: userId,
       deletedAt: IsNull()
+    },
+    order: {
+      title: "ASC"
     }
   });
 }

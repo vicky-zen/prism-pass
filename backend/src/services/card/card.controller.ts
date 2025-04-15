@@ -2,6 +2,7 @@ import * as Yup from "yup";
 import * as Common from "../../common/index.js";
 import * as Entity from "../../entities/index.js";
 import * as Repo from "../../repository/index.js";
+import { VaultType } from "../vault-item/vault-item.model.js";
 import * as Model from "./card.model.js";
 
 export class CardController {
@@ -30,46 +31,55 @@ export class CardController {
   private async validateSaveCardDetailsReq(req: Model.ISaveCardDetailsReq) {
     const schema: Yup.ObjectSchema<Model.ISaveCardDetailsReq> =
       Yup.object().shape({
-        id: Yup.string().uuid().nullable().defined(),
-        vaultId: Yup.string().uuid().required(),
-        title: Yup.string().required().max(100),
-        holderName: Yup.string().required().max(100),
+        id: Yup.string()
+          .uuid("Invalid UUID")
+          .nullable()
+          .defined("ID is required"),
+        vaultId: Yup.string()
+          .uuid("Invalid Vault ID")
+          .required("Vault ID is required"),
+        title: Yup.string()
+          .required("Title is required")
+          .max(100, "Max 100 chars"),
+        holderName: Yup.string()
+          .required("Holder name is required")
+          .max(100, "Max 100 chars"),
         cardNumber: Yup.string()
-          .required()
-          .matches(
-            /^\d{13,19}$/,
-            "Card number must be between 13 to 19 digits"
-          ),
-        cardType: Yup.string().nullable().max(20).defined(),
+          .required("Card number is required")
+          .matches(/^\d{13,19}$/, "Must be 13–19 digits"),
+        cardType: Yup.string()
+          .nullable()
+          .max(20, "Max 20 chars")
+          .defined("Card type is required"),
         expirationDate: Yup.string()
-          .required()
-          .matches(
-            /^\d{4}-\d{2}$/,
-            "Expiration date must be in YYYY-MM format"
-          ),
+          .required("Expiration date is required")
+          .matches(/^\d{4}-\d{2}$/, "Format: YYYY-MM"),
         securityCode: Yup.string()
-          .required()
-          .length(3)
-          .matches(/^\d{3}$/, "Security code must be exactly 3 digits"),
+          .required("Security code is required")
+          .length(3, "Must be 3 digits")
+          .matches(/^\d{3}$/, "Must be 3 digits"),
         pin: Yup.string()
-          .required()
-          .matches(/^\d{4,6}$/, "PIN must be 4 to 6 digits"),
-        note: Yup.string().nullable().max(250).defined(),
-        isPinned: Yup.boolean().required()
+          .required("PIN is required")
+          .matches(/^\d{4,6}$/, "Must be 4–6 digits"),
+        note: Yup.string()
+          .nullable()
+          .max(250, "Max 250 chars")
+          .defined("Note is required"),
+        isPinned: Yup.boolean().required("Pinned status is required")
       });
 
-    await schema.validate(req, { abortEarly: false });
+    await schema.validate(req);
   }
 
   private getSaveCardDetailsInstance(req: Model.ISaveCardDetailsReq) {
     const card = new Entity.Card();
+    const vault = new Entity.Vault();
+    vault.id = req.vaultId;
 
     if (req.id) {
       card.id = req.id;
       card.updatedAt = new Date();
     }
-
-    card.expirationDate = `${req.expirationDate}-01`;
 
     card.title = req.title;
     card.holderName = req.holderName;
@@ -78,11 +88,14 @@ export class CardController {
     card.securityCode = req.securityCode;
     card.pin = req.pin;
     card.note = req.note;
+    card.expirationDate = req.expirationDate;
     card.isPinned = req.isPinned;
-    card.createBy = this.authToken.userId;
+    card.createdBy = this.authToken.userId;
     card.createdAt = new Date();
     card.deletedAt = null;
-    card.type = "card";
+    card.type = VaultType.card;
+
+    card.vault = vault;
 
     return card;
   }

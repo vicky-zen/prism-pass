@@ -4,6 +4,7 @@ import cors from "cors";
 import { Express, NextFunction } from "express";
 import helmet from "helmet";
 import { validateJWT } from "./jwt.js";
+import { hybridDecrypt } from "./hybridDecrypt.js";
 
 export function doNothing(next: NextFunction) {
   next();
@@ -21,12 +22,12 @@ export function handleBodyRequestParsing(app: Express) {
   app.use(
     parser.urlencoded({
       limit: "1mb",
-      extended: true,
+      extended: true
     })
   );
   app.use(
     parser.json({
-      limit: "20mb",
+      limit: "20mb"
     })
   );
 }
@@ -37,4 +38,8 @@ export function handleCompression(app: Express) {
 
 export function handleJWT(app: Express) {
   app.use(validateJWT);
+}
+
+export function handleHybridDecrypt(app: Express) {
+  app.use(hybridDecrypt);
 }

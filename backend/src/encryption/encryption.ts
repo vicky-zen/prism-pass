@@ -4,13 +4,14 @@ import { ValueTransformer } from "typeorm";
 const ENCRYPTION_KEY =
   process.env.ENCRYPTION_KEY || "NDmwfEjNZK5RP+i9xLpxQEt1ZzLEvMHTIfJ5q3P4UQw=";
 
-if (ENCRYPTION_KEY.length < 32) {
+const key = forge.util.decode64(ENCRYPTION_KEY);
+
+if (key.length < 32) {
   throw new Error("ENCRYPTION_KEY must be 32 characters long for AES-256");
 }
 
 export function encrypt(text: string): string {
   const iv = forge.random.getBytesSync(16);
-  const key = forge.util.createBuffer(ENCRYPTION_KEY, "utf8");
   const cipher = forge.cipher.createCipher("AES-CBC", key);
   cipher.start({ iv });
   cipher.update(forge.util.createBuffer(text, "utf8"));
@@ -24,7 +25,6 @@ export function decrypt(encryptedBase64: string): string {
   const encryptedBytes = forge.util.decode64(encryptedBase64);
   const iv = encryptedBytes.slice(0, 16);
   const encrypted = encryptedBytes.slice(16);
-  const key = forge.util.createBuffer(ENCRYPTION_KEY, "utf8");
 
   const decipher = forge.cipher.createDecipher("AES-CBC", key);
   decipher.start({ iv });
@@ -40,11 +40,9 @@ export function decrypt(encryptedBase64: string): string {
 
 export const EncryptedTransformer: ValueTransformer = {
   to: (value?: string | null): string | null => {
-    if (value === null || value === undefined) return null;
-    return encrypt(value);
+    return value ? encrypt(value) : null;
   },
   from: (value?: string | null): string | null => {
-    if (value === null || value === undefined) return null;
-    return decrypt(value);
+    return value ? decrypt(value) : null;
   }
 };

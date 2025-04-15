@@ -72,30 +72,28 @@ export class PersonalInfo {
 
   @Typeorm.Column("character varying", {
     name: "email",
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   email: string;
 
   @Typeorm.Column("character varying", {
     name: "mobile",
-    length: 15,
+    length: 255,
     transformer: EncryptedTransformer
   })
   mobile: string;
 
   @Typeorm.Column("date", {
     name: "birth_date",
-    nullable: true,
-    transformer: EncryptedTransformer
+    nullable: true
   })
   birthDate: string | null;
 
   @Typeorm.Column("enum", {
     name: "gender",
     nullable: true,
-    enum: ["male", "female", "other", "not_to_say"],
-    transformer: EncryptedTransformer
+    enum: ["male", "female", "other", "not_to_say"]
   })
   gender: "male" | "female" | "other" | "not_to_say" | null;
 
@@ -118,7 +116,7 @@ export class PersonalInfo {
   @Typeorm.Column("character varying", {
     name: "floor",
     nullable: true,
-    length: 50,
+    length: 255,
     transformer: EncryptedTransformer
   })
   floor: string | null;
@@ -126,7 +124,7 @@ export class PersonalInfo {
   @Typeorm.Column("character varying", {
     name: "city",
     nullable: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   city: string | null;
@@ -134,7 +132,7 @@ export class PersonalInfo {
   @Typeorm.Column("character varying", {
     name: "state",
     nullable: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   state: string | null;
@@ -142,7 +140,7 @@ export class PersonalInfo {
   @Typeorm.Column("character varying", {
     name: "postal_code",
     nullable: true,
-    length: 20,
+    length: 255,
     transformer: EncryptedTransformer
   })
   postalCode: string | null;
@@ -150,7 +148,7 @@ export class PersonalInfo {
   @Typeorm.Column("character varying", {
     name: "country",
     nullable: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   country: string | null;
@@ -158,7 +156,7 @@ export class PersonalInfo {
   @Typeorm.Column("character varying", {
     name: "county",
     nullable: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   county: string | null;
@@ -167,7 +165,7 @@ export class PersonalInfo {
     name: "social_security_number",
     nullable: true,
     unique: true,
-    length: 11,
+    length: 255,
     transformer: EncryptedTransformer
   })
   socialSecurityNumber: string | null;
@@ -176,7 +174,7 @@ export class PersonalInfo {
     name: "passport_number",
     nullable: true,
     unique: true,
-    length: 20,
+    length: 255,
     transformer: EncryptedTransformer
   })
   passportNumber: string | null;
@@ -185,7 +183,7 @@ export class PersonalInfo {
     name: "license_number",
     nullable: true,
     unique: true,
-    length: 20,
+    length: 255,
     transformer: EncryptedTransformer
   })
   licenseNumber: string | null;
@@ -193,7 +191,7 @@ export class PersonalInfo {
   @Typeorm.Column("character varying", {
     name: "phone_number",
     nullable: true,
-    length: 15,
+    length: 255,
     transformer: EncryptedTransformer
   })
   phoneNumber: string | null;
@@ -220,7 +218,7 @@ export class PersonalInfo {
     name: "reddit_username",
     nullable: true,
     unique: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   redditUsername: string | null;
@@ -229,7 +227,7 @@ export class PersonalInfo {
     name: "facebook_id",
     nullable: true,
     unique: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   facebookId: string | null;
@@ -238,7 +236,7 @@ export class PersonalInfo {
     name: "instagram_id",
     nullable: true,
     unique: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   instagramId: string | null;
@@ -247,7 +245,7 @@ export class PersonalInfo {
     name: "gmail_id",
     nullable: true,
     unique: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   gmailId: string | null;
@@ -280,7 +278,7 @@ export class PersonalInfo {
   @Typeorm.Column("character varying", {
     name: "work_phone_number",
     nullable: true,
-    length: 15,
+    length: 255,
     transformer: EncryptedTransformer
   })
   workPhoneNumber: string | null;
@@ -289,7 +287,7 @@ export class PersonalInfo {
     name: "work_email",
     nullable: true,
     unique: true,
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   workEmail: string | null;
@@ -305,11 +303,11 @@ export class PersonalInfo {
   @Typeorm.Column("boolean", { name: "is_pinned", default: () => "false" })
   isPinned: boolean;
 
-  @Typeorm.Column("uuid", { name: "create_by" })
-  createBy: string;
+  @Typeorm.Column("uuid", { name: "created_by" })
+  createdBy: string;
 
   @Typeorm.CreateDateColumn({
-    name: "createAt",
+    name: "created_at",
     type: "timestamp with time zone"
   })
   createdAt: Date;
@@ -322,13 +320,13 @@ export class PersonalInfo {
   modifiedCount: number | null;
 
   @Typeorm.UpdateDateColumn({
-    name: "updateAt",
+    name: "updated_at",
     type: "timestamp with time zone"
   })
   updatedAt: Date;
 
   @Typeorm.DeleteDateColumn({
-    name: "deleteAt",
+    name: "deleted_at",
     type: "timestamp with time zone",
     nullable: true
   })

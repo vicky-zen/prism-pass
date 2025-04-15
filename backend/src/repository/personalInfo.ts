@@ -15,7 +15,7 @@ export async function findPersonalInfo(
   return AppDataSource.getRepository(PersonalInfo).findOne({
     where: {
       id: infoId,
-      createBy: userId,
+      createdBy: userId,
       vault: {
         id: vaultId
       },
@@ -31,8 +31,11 @@ export async function getActivePersonalInfosByVaultId(
   return AppDataSource.getRepository(PersonalInfo).find({
     where: {
       vault: { id: vaultId },
-      createBy: userId,
+      createdBy: userId,
       deletedAt: IsNull()
+    },
+    order: {
+      title: "ASC"
     }
   });
 }

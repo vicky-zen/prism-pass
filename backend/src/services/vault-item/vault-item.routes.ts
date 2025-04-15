@@ -93,5 +93,32 @@ export const VaultItemRoutes: IRoute[] = [
         }
       }
     ]
+  },
+  {
+    path: "/api/pass/vault-items/pin",
+    method: "POST",
+    handler: [
+      async (req: Request, res: Response, doNothing) => {
+        const timer = new Timer();
+        timer.start();
+
+        try {
+          const controller = new VaultItemController(req.authToken);
+          const result = await controller.pinOrUnpinItems(req.body);
+
+          res.status(200).send(getApiSuccessRes(result));
+        } catch (err) {
+          res
+            .status(200)
+            .send(await getErrorRes(err, req, "/api/pass/vault-items/pin"));
+        } finally {
+          logger.info("success", {
+            timeMs: timer.stop(),
+            type: "Timing",
+            subType: "Pin/Unpin Vault Items"
+          });
+        }
+      }
+    ]
   }
 ];

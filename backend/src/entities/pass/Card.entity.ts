@@ -19,14 +19,14 @@ export class Card {
 
   @Typeorm.Column("character varying", {
     name: "holder_name",
-    length: 100,
+    length: 255,
     transformer: EncryptedTransformer
   })
   holderName: string;
 
   @Typeorm.Column("character varying", {
     name: "card_number",
-    length: 19,
+    length: 255,
     transformer: EncryptedTransformer
   })
   cardNumber: string;
@@ -38,22 +38,22 @@ export class Card {
   })
   cardType: string | null;
 
-  @Typeorm.Column("date", {
+  @Typeorm.Column("character varying", {
     name: "expiration_date",
-    transformer: EncryptedTransformer
+    length: 20
   })
   expirationDate: string;
 
-  @Typeorm.Column("character", {
+  @Typeorm.Column("character varying", {
     name: "security_code",
-    length: 3,
+    length: 255,
     transformer: EncryptedTransformer
   })
   securityCode: string;
 
-  @Typeorm.Column("character", {
+  @Typeorm.Column("character varying", {
     name: "pin",
-    length: 6,
+    length: 255,
     transformer: EncryptedTransformer
   })
   pin: string;
@@ -76,11 +76,11 @@ export class Card {
   @Typeorm.Column("boolean", { name: "is_pinned", default: () => "false" })
   isPinned: boolean;
 
-  @Typeorm.Column("uuid", { name: "create_by" })
-  createBy: string;
+  @Typeorm.Column("uuid", { name: "created_by" })
+  createdBy: string;
 
   @Typeorm.CreateDateColumn({
-    name: "createAt",
+    name: "created_at",
     type: "timestamp with time zone"
   })
   createdAt: Date;
@@ -93,13 +93,13 @@ export class Card {
   modifiedCount: number | null;
 
   @Typeorm.UpdateDateColumn({
-    name: "updateAt",
+    name: "updated_at",
     type: "timestamp with time zone"
   })
   updatedAt: Date;
 
   @Typeorm.DeleteDateColumn({
-    name: "deleteAt",
+    name: "deleted_at",
     type: "timestamp with time zone",
     nullable: true
   })

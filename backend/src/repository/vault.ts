@@ -13,14 +13,14 @@ export async function getVaultByIdAndUser(
 ): Promise<Vault | null> {
   return AppDataSource.getRepository(Vault).findOne({
     where: {
-      createBy: userId,
+      createdBy: userId,
       id: vaultId,
       deletedAt: IsNull()
     }
   });
 }
 
-export async function getAllActiveVaultsByUser(createBy: string): Promise<
+export async function getAllActiveVaultsByUser(createdBy: string): Promise<
   (Vault & {
     cardCount: number;
     loginCount: number;
@@ -30,7 +30,7 @@ export async function getAllActiveVaultsByUser(createBy: string): Promise<
 > {
   const vaults = await AppDataSource.getRepository(Vault).find({
     where: {
-      createBy,
+      createdBy,
       deletedAt: IsNull()
     },
     order: {
@@ -48,28 +48,28 @@ export async function getAllActiveVaultsByUser(createBy: string): Promise<
       const [cardCount, loginCount, noteCount, pInfoCount] = await Promise.all([
         cardRepo.count({
           where: {
-            createBy,
+            createdBy,
             vault: { id: vault.id },
             deletedAt: IsNull()
           }
         }),
         loginRepo.count({
           where: {
-            createBy,
+            createdBy,
             vault: { id: vault.id },
             deletedAt: IsNull()
           }
         }),
         noteRepo.count({
           where: {
-            createBy,
+            createdBy,
             vault: { id: vault.id },
             deletedAt: IsNull()
           }
         }),
         pInfoRepo.count({
           where: {
-            createBy,
+            createdBy,
             vault: { id: vault.id },
             deletedAt: IsNull()
           }
@@ -102,9 +102,50 @@ export async function moveItemsToVault(
       .update()
       .set({ vault: { id: toVaultId } })
       .where(
-        "vaultId = :fromVaultId AND createBy = :userId AND deletedAt IS NULL",
+        "vaultId = :fromVaultId AND createdBy = :userId AND deletedAt IS NULL",
         { fromVaultId, userId }
       )
       .execute();
+  }
+}
+
+export async function deleteVault(
+  userId: string,
+  vault: Vault
+): Promise<boolean> {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    await queryRunner.manager.save(vault);
+
+    await queryRunner.manager.softDelete(Login, {
+      vault: { id: vault.id },
+      createdBy: userId
+    });
+
+    await queryRunner.manager.softDelete(Card, {
+      vault: { id: vault.id },
+      createdBy: userId
+    });
+
+    await queryRunner.manager.softDelete(Note, {
+      vault: { id: vault.id },
+      createdBy: userId
+    });
+
+    await queryRunner.manager.softDelete(PersonalInfo, {
+      vault: { id: vault.id },
+      createdBy: userId
+    });
+
+    await queryRunner.commitTransaction();
+    return true;
+  } catch (err) {
+    await queryRunner.rollbackTransaction();
+    throw err;
+  } finally {
+    await queryRunner.release();
   }
 }

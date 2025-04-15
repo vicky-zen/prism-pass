@@ -28,13 +28,18 @@ export class VaultController {
 
   private async validateSaveVaultReq(req: Model.ISaveVaultReq) {
     const schema: Yup.ObjectSchema<Model.ISaveVaultReq> = Yup.object().shape({
-      id: Yup.string().uuid().nullable().defined(),
-      title: Yup.string().required("Title is required").max(100),
+      id: Yup.string()
+        .uuid("Invalid UUID")
+        .nullable()
+        .defined("ID is required"),
+      title: Yup.string()
+        .required("Title is required")
+        .max(100, "Max 100 chars"),
       color: Yup.string().required("Color is required"),
       icon: Yup.string().required("Icon is required")
     });
 
-    await schema.validate(req, { abortEarly: false });
+    await schema.validate(req);
   }
 
   private buildVaultEntity(req: Model.ISaveVaultReq): Entity.Vault {
@@ -48,7 +53,7 @@ export class VaultController {
     vault.title = req.title;
     vault.color = req.color;
     vault.icon = req.icon;
-    vault.createBy = this.authToken.userId;
+    vault.createdBy = this.authToken.userId;
     vault.createdAt = new Date();
     vault.deletedAt = null;
 
@@ -82,7 +87,7 @@ export class VaultController {
     vault.deletedAt = new Date();
     vault.updatedAt = new Date();
 
-    const isDeleted = await Repo.saveVault(vault);
+    const isDeleted = await Repo.deleteVault(this.authToken.userId, vault);
 
     return { isDeleted };
   }

@@ -19,7 +19,8 @@ export function applyMiddleware(app: Express) {
     Handler.handleBodyRequestParsing,
     Handler.handleCompression,
     Handler.handleHelmet,
-    Handler.handleJWT
+    Handler.handleJWT,
+    Handler.handleHybridDecrypt
   ];
 
   for (const wrapper of middlewareWrappers) {

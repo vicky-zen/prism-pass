@@ -1,4 +1,5 @@
 export * from "./common.js";
+export * from "./hybridDecrypt.js";
 export * from "./jwt.js";
 export * from "./router.js";
 export * from "./logger.js";

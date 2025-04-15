@@ -18,7 +18,7 @@ export async function findLoginById(
       vault: {
         id: vaultId
       },
-      createBy: userId,
+      createdBy: userId,
       deletedAt: IsNull()
     }
   });
@@ -31,8 +31,11 @@ export async function getActiveLoginsByVaultId(
   return AppDataSource.getRepository(Login).find({
     where: {
       vault: { id: vaultId },
-      createBy: userId,
+      createdBy: userId,
       deletedAt: IsNull()
+    },
+    order: {
+      title: "ASC"
     }
   });
 }

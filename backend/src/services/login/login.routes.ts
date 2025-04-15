@@ -1,4 +1,3 @@
-// routes/login.routes.ts
 import { Request, Response } from "express";
 import { getApiSuccessRes, getErrorRes } from "../../common/error.js";
 import { IRoute, logger } from "../../middleware/index.js";

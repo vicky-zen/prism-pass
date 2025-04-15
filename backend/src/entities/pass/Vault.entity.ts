@@ -24,22 +24,22 @@ export class Vault {
   icon: string;
 
   @Typeorm.CreateDateColumn({
-    name: "createAt",
+    name: "created_at",
     type: "timestamp with time zone"
   })
   createdAt: Date;
 
   @Typeorm.Column("timestamp with time zone", {
-    name: "updatedAt",
+    name: "updated_at",
     default: () => "CURRENT_TIMESTAMP"
   })
   updatedAt: Date;
 
-  @Typeorm.Column("character varying", { name: "createBy" })
-  createBy: string;
+  @Typeorm.Column("character varying", { name: "created_by" })
+  createdBy: string;
 
   @Typeorm.DeleteDateColumn({
-    name: "deleteAt",
+    name: "deleted_at",
     type: "timestamp with time zone",
     nullable: true
   })

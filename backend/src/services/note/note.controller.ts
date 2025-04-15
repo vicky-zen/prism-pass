@@ -2,6 +2,7 @@ import * as Yup from "yup";
 import * as Common from "../../common/index.js";
 import * as Entity from "../../entities/index.js";
 import * as Repo from "../../repository/index.js";
+import { VaultType } from "../vault-item/vault-item.model.js";
 import * as Model from "./note.model.js";
 
 export class NoteController {
@@ -27,18 +28,27 @@ export class NoteController {
 
   private async validateSaveNoteReq(req: Model.ISaveNoteReq) {
     const schema: Yup.ObjectSchema<Model.ISaveNoteReq> = Yup.object().shape({
-      id: Yup.string().uuid().nullable().defined(),
-      vaultId: Yup.string().uuid().required(),
-      title: Yup.string().required().max(100),
-      note: Yup.string().required().max(250),
-      isPinned: Yup.boolean().required()
+      id: Yup.string()
+        .uuid("Invalid UUID")
+        .nullable()
+        .defined("ID is required"),
+      vaultId: Yup.string()
+        .uuid("Invalid Vault ID")
+        .required("Vault ID is required"),
+      title: Yup.string()
+        .required("Title is required")
+        .max(100, "Max 100 chars"),
+      note: Yup.string().required("Note is required").max(250, "Max 250 chars"),
+      isPinned: Yup.boolean().required("Pinned status is required")
     });
 
-    await schema.validate(req, { abortEarly: false });
+    await schema.validate(req);
   }
 
   private getSaveNoteInstance(req: Model.ISaveNoteReq) {
     const note = new Entity.Note();
+    const vault = new Entity.Vault();
+    vault.id = req.vaultId;
 
     if (req.id) {
       note.id = req.id;
@@ -48,10 +58,11 @@ export class NoteController {
     note.title = req.title;
     note.note = req.note;
     note.isPinned = req.isPinned;
-    note.createBy = this.authToken.userId;
+    note.createdBy = this.authToken.userId;
     note.createdAt = new Date();
     note.deletedAt = null;
-    note.type = "note";
+    note.type = VaultType.note;
+    note.vault = vault;
 
     return note;
   }

@@ -1,6 +1,5 @@
 export interface IVaultItemOperationReq {
-  items: { id: string; type: VaultType }[];
-  vaultId: string;
+  items: { id: string; type: VaultType; vaultId: string }[];
 }
 
 export type IDeleteItemsReq = IVaultItemOperationReq;
@@ -19,6 +18,14 @@ export type IPermanentDeleteItemsReq = IVaultItemOperationReq;
 
 export interface IPermanentDeleteItemsRes {
   isDeleted: boolean;
+}
+
+export interface IPinItemsReq extends IVaultItemOperationReq {
+  isPin: boolean;
+}
+
+export interface IPinItemsRes {
+  isUpdated: boolean;
 }
 
 export enum VaultType {

@@ -5,3 +5,4 @@ export * from "./reg-ex.js";
 export * from "./uuid.js";
 export * from "./timer.js";
 export * from "./token.js";
+export * from "./hybridEncryption.js";

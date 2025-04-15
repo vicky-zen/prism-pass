@@ -4,6 +4,7 @@ import { Timer } from "../../utils/timer.js";
 import { VaultController } from "./vault.controller.js";
 import { logger } from "../../middleware/logger.js";
 import { IRoute } from "../../middleware/router.js";
+import { sendEncryptedResponse } from "../../middleware/hybridDecrypt.js";
 
 export const VaultRoutes: IRoute[] = [
   {
@@ -43,7 +44,7 @@ export const VaultRoutes: IRoute[] = [
           const controller = new VaultController(req.authToken);
           const data = await controller.getActiveVaults();
 
-          res.status(200).send(getApiSuccessRes(data));
+          sendEncryptedResponse(res, getApiSuccessRes(data));
         } catch (error) {
           res
             .status(200)
@@ -67,10 +68,9 @@ export const VaultRoutes: IRoute[] = [
         timer.start();
         try {
           const controller = new VaultController(req.authToken);
-          const vaultId = req.params.id;
-          const data = await controller.getVaultById(vaultId);
+          const data = await controller.getVaultById(req.params.id);
 
-          res.status(200).send(getApiSuccessRes(data));
+          sendEncryptedResponse(res, getApiSuccessRes(data));
         } catch (error) {
           res
             .status(200)
