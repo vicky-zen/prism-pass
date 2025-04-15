@@ -37,6 +37,8 @@ backend/.env.test.local
 backend/.env.production.local
 backend/.env.local
 
+backend/keys/*.pem
+
 # Output file
 backend/dist/
 
